@@ -158,6 +158,14 @@ def get_all_transactions(start_date, end_date):
 
         all_records.extend(records)
 
+    #use first row as column names
+    if all_records:
+        columns = list(all_records[0].keys())
+        for record in all_records:
+            for column in columns:
+                if column not in record:
+                    record[column] = None
+
     return pd.DataFrame(all_records)
 
 
