@@ -1,0 +1,2 @@
+https://api.bog.ge/docs/en/bonline/rates/commercial-currency
+https://developers.tbcbank.ge/docs/api-overview (integration Services)
