@@ -1,0 +1,42 @@
+{
+  "RGG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "RGH": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "FRG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "SRG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "GAG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "MSG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "MRG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "PRG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "BRG": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  },
+  "MHR": {
+    "server_cert.pem": false,
+    "key_unencrypted.pem": false
+  }
+}

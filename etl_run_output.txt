@@ -1,0 +1,166 @@
+No credentials for company: GAG. Skipping.
+No credentials for company: GAG. Skipping.
+No credentials for company: GAG. Skipping.
+No credentials for company: GAG. Skipping.
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error getting statement for account GE26TB7810536020100006: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error processing movements for account GE26TB7810536020100006: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error getting statement for account GE81TB7810536120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error processing movements for account GE81TB7810536120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error getting statement for account GE81TB7810536120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error processing movements for account GE81TB7810536120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error getting statement for account GE27TB7810536120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+Error processing movements for account GE27TB7810536120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP GEORGIA LLC\server_cert.pem
+TBC API Error for company RGH: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+Error getting statement for account GE31TB7174436020100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+TBC API Error for company RGH: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+Error processing movements for account GE31TB7174436020100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+TBC API Error for company RGH: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+Error getting statement for account GE21TB7174436120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+TBC API Error for company RGH: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+Error processing movements for account GE21TB7174436120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+TBC API Error for company RGH: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+Error getting statement for account GE21TB7174436120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+TBC API Error for company RGH: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+Error processing movements for account GE21TB7174436120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\RETAIL GROUP HOLDING LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE57TB7141736020100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE57TB7141736020100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE31TB7141736120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE31TB7141736120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE31TB7141736120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE31TB7141736120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE31TB7141736120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company FRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE31TB7141736120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\FASHION RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company SRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE98TB7749736020100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company SRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE98TB7749736020100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company SRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE18TB7749736120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company SRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE18TB7749736120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company SRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE18TB7749736120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company SRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE18TB7749736120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\SPANISH RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company GAG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE59TB7197236020100007: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+TBC API Error for company GAG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE59TB7197236020100007: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+TBC API Error for company GAG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE87TB7197236120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+TBC API Error for company GAG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE87TB7197236120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+TBC API Error for company GAG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE87TB7197236120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+TBC API Error for company GAG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE87TB7197236120100004: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\GLOBAL APPAREL GEORGIA LLC\server_cert.pem
+TBC API Error for company MSG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+Error getting statement for account GE56TB7111036020100006: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+TBC API Error for company MSG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+Error processing movements for account GE56TB7111036020100006: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+TBC API Error for company MSG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+Error getting statement for account GE30TB7111036120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+TBC API Error for company MSG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+Error processing movements for account GE30TB7111036120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+TBC API Error for company MSG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+Error getting statement for account GE30TB7111036120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+TBC API Error for company MSG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+Error processing movements for account GE30TB7111036120100005: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MEGA STORE GEORGIA LLC\server_cert.pem
+TBC API Error for company MRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE71TB7053236020100007: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company MRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE71TB7053236020100007: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company MRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE88TB7053236120100008: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company MRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE88TB7053236120100008: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company MRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE88TB7053236120100008: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company MRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE88TB7053236120100008: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company PRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE40TB7097236020100014: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company PRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE40TB7097236020100014: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company PRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE14TB7097236120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company PRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE14TB7097236120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company PRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE14TB7097236120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company PRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE14TB7097236120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\PRO RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company BRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE44TB7089936020100016: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company BRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE44TB7089936020100016: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company BRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE72TB7089936120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company BRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE72TB7089936120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company BRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+Error getting statement for account GE72TB7089936120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company BRG: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+Error processing movements for account GE72TB7089936120100013: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\BEST RETAIL GEORGIA LLC\server_cert.pem
+TBC API Error for company MHR: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+Error getting statement for account GE28TB7148336020100003: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+TBC API Error for company MHR: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+Error processing movements for account GE28TB7148336020100003: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+TBC API Error for company MHR: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+Error getting statement for account GE02TB7148336120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+TBC API Error for company MHR: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+Error processing movements for account GE02TB7148336120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+TBC API Error for company MHR: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+Error getting statement for account GE02TB7148336120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+TBC API Error for company MHR: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+Error processing movements for account GE02TB7148336120100002: Could not find the TLS certificate file, invalid path: C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert\MASTER HOME RETAIL LLC\server_cert.pem
+No transactions found for the specified period
+No transactions to write to database.
+
+TLS Certificate Checklist:
+RGG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+RGH:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+FRG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+SRG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+GAG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+MSG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+MRG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+PRG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+BRG:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
+MHR:
+  server_cert.pem: MISSING
+  key_unencrypted.pem: MISSING
