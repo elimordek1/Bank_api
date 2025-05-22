@@ -15,6 +15,7 @@ _logger = logging.getLogger(__name__)
 
 # Constants
 TBC_CERT_BASE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'tbc_certificates')
+print("DEBUG: TBC_CERT_BASE_PATH =", TBC_CERT_BASE_PATH)
 
 # TLS certificate checklist for each company
 TLS_CERTIFICATE_STATUS = {}
@@ -128,13 +129,15 @@ def get_cert_paths(company_abbr):
         key_file,
     )
 
-def read_accounts_from_excel(excel_file='data/Banks.xlsx'):
+def read_accounts_from_excel(excel_file=None):
+    if excel_file is None:
+        PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) )
+        excel_file = os.path.join(PROJECT_ROOT, 'data', 'Banks.xlsx')
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
     except Exception as e:
         _logger.error(f"Error reading Excel file: {e}")
         return pd.DataFrame()
-
     df['company'] = df['ID'].apply(lambda x: x.split(' ')[2])
     df['currency'] = df['ID'].apply(lambda x: x.split(' ')[1])
     df['bank_name'] = df['ID'].apply(lambda x: x.split(' ')[0])

@@ -3,6 +3,7 @@ import base64
 import requests
 import logging
 import sqlite3
+import os
 
 _logger = logging.getLogger(__name__)
 
@@ -29,13 +30,15 @@ COMPANY_CREDENTIALS_BOG = {
 }
 
 
-def read_accounts_from_excel(excel_file='data/Banks.xlsx'):
+def read_accounts_from_excel(excel_file=None):
+    if excel_file is None:
+        PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) )
+        excel_file = os.path.join(PROJECT_ROOT, 'data', 'Banks.xlsx')
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
     except Exception as e:
         _logger.error(f"Error reading Excel file: {e}")
         return pd.DataFrame()
-
     df['company'] = df['ID'].apply(lambda x: x.split(' ')[2])
     df['currency'] = df['ID'].apply(lambda x: x.split(' ')[1])
     df['bank_name'] = df['ID'].apply(lambda x: x.split(' ')[0])

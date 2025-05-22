@@ -2,11 +2,15 @@ import logging
 import pandas as pd
 import requests
 import base64
+import os
 
 _logger = logging.getLogger(__name__)
 
 
-def read_accounts_from_excel(bank, excel_file='data/Banks.xlsx', ):
+def read_accounts_from_excel(bank, excel_file=None):
+    if excel_file is None:
+        PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) )
+        excel_file = os.path.join(PROJECT_ROOT, 'data', 'Banks.xlsx')
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
     except Exception as e:
