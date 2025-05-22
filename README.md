@@ -47,9 +47,9 @@ Bank_api/
 
 ## Usage
 ### Run the ETL Pipeline
-The main ETL process is run via `main.py`:
+The main ETL process is run via the following command from the project root:
 ```sh
-python src/bank_api/main.py
+python -m bank_api.main
 ```
 - This will fetch transactions and currency rates for the hardcoded date range in `main.py` and write results to `bank_data.db`.
 - You can modify the `start_date`, `end_date`, or currency list in `main.py` as needed.
