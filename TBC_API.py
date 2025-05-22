@@ -4,6 +4,12 @@ import xmltodict
 import json
 import os
 import pandas as pd
+import logging
+from datetime import datetime
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+_logger = logging.getLogger(__name__)
 
 # Constants
 TBC_CERT_BASE_PATH = r"C:\Users\arkik\DataspellProjects\POLI_BANK\TBC_Cert"
@@ -24,28 +30,29 @@ CERTIFICATE_COMPANIES = {
 
 # TBC credentials
 TBC_CREDENTIALS = {
-    'SRG': {'username': 'SRG_1', 'password': 'CCQ1BZ2F'},
-    'RGG': {'username': 'RGG_1', 'password': 'QY8VNDBK'},
-    'MRG': {'username': 'MRG_1', 'password': 'R5VCE3GM'},
-    'BRG': {'username': 'BRG_1', 'password': 'LTGZZHW5'},
-    'PRG': {'username': 'PRG_1', 'password': 'V7CP3ERP'},
-    'MSG': {'username': 'MSG_1', 'password': 'PB9FMS46'},
-    'FRG': {'username': 'FRG_1', 'password': 'GG4PRYBK'},
-    'MHR': {'username': 'MHR_1', 'password': '6D2MTAYD'},
-    'RGH': {'username': 'RGH_1', 'password': '8NG1SBNU'},
-    'GAG': {'username': 'GAG_1', 'password': 'YXXXX9PB'},
+    'SRG': {'username': 'SRG_1', 'password': 'ASDasd12334!@'},
+    'RGG': {'username': 'RGG_1', 'password': 'ASDasd12334!@'},
+    'MRG': {'username': 'MRG_1', 'password': 'ASDasd12334!@'},
+    'BRG': {'username': 'BRG_1', 'password': 'ASDasd12334!@'},
+    'PRG': {'username': 'PRG_1', 'password': 'ASDasd12334!@'},
+    'MSG': {'username': 'MSG_1', 'password': 'ASDasd12334!@'},
+    'FRG': {'username': 'FRG_1', 'password': 'ASDasd12334!@'},
+    'MHR': {'username': 'MHR_1', 'password': 'ASDasd12334!@'},
+    'RGH': {'username': 'RGH_1', 'password': 'ASDasd12334!@'},
+    'GAG': {'username': 'GAG_1', 'password': 'ASDasd12334!@'},
 }
 
 # SOAP Setup
 TBC_URL = "https://secdbi.tbconline.ge/dbi/dbiService"
 HEADERS = {
     'Content-Type': 'text/xml; charset=utf-8',
-    'SOAPAction': 'http://www.mygemini.com/schemas/mygemini/GetAccountMovements'
 }
 NAMESPACES = {
     'ns2': 'http://www.mygemini.com/schemas/mygemini'
 }
-SOAP_PAYLOAD = '''
+
+# Movement Request SOAP Payload
+MOVEMENTS_PAYLOAD = '''
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:myg="http://www.mygemini.com/schemas/mygemini" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
     <soapenv:Header>
         <wsse:Security>
@@ -69,6 +76,31 @@ SOAP_PAYLOAD = '''
 </soapenv:Envelope>
 '''
 
+# Statement Request SOAP Payload
+STATEMENT_PAYLOAD = '''
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:myg="http://www.mygemini.com/schemas/mygemini" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+    <soapenv:Header>
+        <wsse:Security>
+            <wsse:UsernameToken>
+                <wsse:Username>{username}</wsse:Username>
+                <wsse:Password>{password}</wsse:Password>
+                <wsse:Nonce>{digipass}</wsse:Nonce>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soapenv:Header>
+    <soapenv:Body>
+        <myg:GetAccountStatementRequestIo>
+            <myg:filter>
+                <myg:periodFrom>{start_date}</myg:periodFrom>
+                <myg:periodTo>{end_date}</myg:periodTo>
+                <myg:accountNumber>{account_number}</myg:accountNumber>
+                <myg:currency>{currency}</myg:currency>
+            </myg:filter>
+        </myg:GetAccountStatementRequestIo>
+    </soapenv:Body>
+</soapenv:Envelope>
+'''
+
 def remove_namespaces(data):
     if isinstance(data, dict):
         return {key.split(':')[-1]: remove_namespaces(value) for key, value in data.items()}
@@ -84,50 +116,209 @@ def get_cert_paths(company_abbr):
         os.path.join(folder_path, 'key_unencrypted.pem'),
     )
 
-def get_transactions(company_abbr, account_number, currency, start_datetime, end_datetime):
+def read_accounts_from_excel(excel_file='Banks.xlsx'):
+    try:
+        df = pd.read_excel(excel_file, sheet_name=0)
+    except Exception as e:
+        _logger.error(f"Error reading Excel file: {e}")
+        return pd.DataFrame()
+
+    df['company'] = df['ID'].apply(lambda x: x.split(' ')[2])
+    df['currency'] = df['ID'].apply(lambda x: x.split(' ')[1])
+    df['bank_name'] = df['ID'].apply(lambda x: x.split(' ')[0])
+    df['account_number'] = df['Account Number'].apply(lambda x: x[:-3] if isinstance(x, str) and len(x) > 3 else x)
+    df = df[['company', 'currency', 'bank_name', 'account_number']]
+    df = df[df['account_number'].notna()]
+    return df[df['bank_name'] == 'TBC']
+
+def make_soap_request(company_abbr, payload, soap_action=None):
+    """Make a SOAP request to TBC API using the company certificates"""
     creds = TBC_CREDENTIALS[company_abbr]
     cert_path = get_cert_paths(company_abbr)
 
-    payload = SOAP_PAYLOAD.format(
+    headers = HEADERS.copy()
+    if soap_action:
+        headers['SOAPAction'] = soap_action
+
+    try:
+        response = requests.post(
+            TBC_URL,
+            data=payload,
+            headers=headers,
+            cert=cert_path,
+            verify=True
+        )
+        response.raise_for_status()
+        return response.content.decode('utf-8')
+    except Exception as e:
+        _logger.error(f"TBC API Error for company {company_abbr}: {str(e)}")
+        raise
+
+def get_account_statement(company_abbr, account_number, currency, start_date, end_date):
+    """Get account statement with opening and closing balances"""
+    _logger.info(f"Fetching statement for {company_abbr}, account: {account_number}, currency: {currency}")
+
+    creds = TBC_CREDENTIALS[company_abbr]
+
+    payload = STATEMENT_PAYLOAD.format(
         username=creds['username'],
         password=creds['password'],
-        digipass='1111',  # Constant value works for now
+        digipass='1111',
+        account_number=account_number,
+        currency=currency,
+        start_date=start_date,
+        end_date=end_date
+    )
+
+    try:
+        xml_response = make_soap_request(
+            company_abbr,
+            payload,
+            soap_action='http://www.mygemini.com/schemas/mygemini/GetAccountStatement'
+        )
+
+        root = Et.fromstring(xml_response)
+        raw_data = xmltodict.parse(Et.tostring(root, encoding='unicode'))
+        cleaned_data = remove_namespaces(raw_data)
+
+        statement = cleaned_data['Envelope']['Body']['GetAccountStatementResponseIo'].get('statement', {})
+        return {
+            'opening_date': statement.get('openingDate'),
+            'opening_balance': statement.get('openingBalance'),
+            'closing_date': statement.get('closingDate'),
+            'closing_balance': statement.get('closingBalance'),
+            'credit_sum': statement.get('creditSum'),
+            'debit_sum': statement.get('debitSum'),
+            'currency': statement.get('currency')
+        }
+    except Exception as e:
+        _logger.error(f"Error getting statement for account {account_number}: {str(e)}")
+        return {
+            'opening_date': start_date,
+            'opening_balance': None,
+            'closing_date': end_date,
+            'closing_balance': None,
+            'credit_sum': None,
+            'debit_sum': None,
+            'currency': currency
+        }
+
+def get_transactions(company_abbr, account_number, currency, start_date, end_date):
+    """Get all transactions with statement data"""
+
+    # Format dates for movements API
+    start_datetime = f"{start_date}T00:00:00.000"
+    end_datetime = f"{end_date}T23:59:59.999"
+
+    _logger.info(f"Fetching TBC transactions for {company_abbr}, account: {account_number}, currency: {currency}")
+
+    # First get the account statement for balances
+    statement = get_account_statement(company_abbr, account_number, currency, start_date, end_date)
+
+    # Now get the movements/transactions
+    creds = TBC_CREDENTIALS[company_abbr]
+
+    payload = MOVEMENTS_PAYLOAD.format(
+        username=creds['username'],
+        password=creds['password'],
+        digipass='1111',
         account_number=account_number,
         currency=currency,
         start_datetime=start_datetime,
         end_datetime=end_datetime
     )
 
-    response = requests.post(
-        TBC_URL,
-        data=payload,
-        headers=HEADERS,
-        cert=cert_path,
-        verify=True
-    )
+    try:
+        xml_response = make_soap_request(
+            company_abbr,
+            payload,
+            soap_action='http://www.mygemini.com/schemas/mygemini/GetAccountMovements'
+        )
 
-    if not response.ok:
-        raise Exception(f"TBC API Error: {response.status_code} {response.text}")
+        root = Et.fromstring(xml_response)
+        raw_data = xmltodict.parse(Et.tostring(root, encoding='unicode'))
+        cleaned_data = remove_namespaces(raw_data)
 
-    xml_response = response.content.decode('utf-8')
-    root = Et.fromstring(xml_response)
+        # Extract movements
+        movements = cleaned_data['Envelope']['Body']['GetAccountMovementsResponseIo'].get('accountMovement', [])
 
-    # Find relevant section
-    result_node = root.find('.//ns2:result', namespaces=NAMESPACES)
-    if result_node is None:
-        raise Exception("No 'result' node found in response")
+        # If only one transaction exists, wrap it in a list
+        if isinstance(movements, dict):
+            movements = [movements]
 
-    raw_data = xmltodict.parse(Et.tostring(root, encoding='unicode'))
-    cleaned_data = remove_namespaces(raw_data)
-    return json.dumps(cleaned_data, indent=4, ensure_ascii=False)
+        # Add company, account, and statement info to each movement
+        for movement in movements:
+            # Add basic account info
+            movement['company'] = company_abbr
+            movement['currency'] = currency
+            movement['account_number'] = account_number
+
+            # Add statement info
+            movement['opening_date'] = statement['opening_date']
+            movement['opening_balance'] = statement['opening_balance']
+            movement['closing_date'] = statement['closing_date']
+            movement['closing_balance'] = statement['closing_balance']
+            movement['statement_credit_sum'] = statement['credit_sum']
+            movement['statement_debit_sum'] = statement['debit_sum']
+
+        return movements
+    except Exception as e:
+        _logger.error(f"Error processing movements for account {account_number}: {str(e)}")
+        return []
+
+def get_all_transactions(start_date, end_date):
+    """
+    Get all transactions for all TBC accounts from the Excel file
+
+    Args:
+        start_date (str): Start date in YYYY-MM-DD format
+        end_date (str): End date in YYYY-MM-DD format
+
+    Returns:
+        DataFrame: All transactions
+    """
+    accounts_df = read_accounts_from_excel()
+    all_transactions = []
+
+    for _, row in accounts_df.iterrows():
+        company = row['company']
+        currency = row['currency']
+        account_number = row['account_number']
+
+        if company not in TBC_CREDENTIALS:
+            _logger.warning(f"No credentials for company: {company}")
+            continue
+
+        try:
+            transactions = get_transactions(
+                company,
+                account_number,
+                currency,
+                start_date,
+                end_date
+            )
+            all_transactions.extend(transactions)
+        except Exception as e:
+            _logger.error(f"Failed to get transactions for {company} {account_number}: {str(e)}")
+
+    # Convert to DataFrame
+    if all_transactions:
+        df = pd.DataFrame(all_transactions)
+        return df
+    else:
+        _logger.warning("No transactions found for the specified period")
+        return pd.DataFrame()
 
 # Example usage
 if __name__ == "__main__":
-    company_abbr = "RGG"
-    account_number = "GE29TB1234567890123456"
-    currency = "GEL"
-    start = "2025-05-01T00:00:00.000"
-    end = "2025-05-10T23:59:59.999"
+    start_date = "2025-05-01"
+    end_date = "2025-05-10"
 
-    data = get_transactions(company_abbr, account_number, currency, start, end)
-    print(data)
+    df = get_all_transactions(start_date, end_date)
+
+    if not df.empty:
+        df.to_excel('tbc_transactions.xlsx', index=False)
+        print(f"Saved {len(df)} transactions to tbc_transactions.xlsx")
+        print(f"Sample data: {df.head(2).to_dict('records')}")
+    else:
+        print("No transactions found")
