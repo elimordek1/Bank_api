@@ -8,14 +8,16 @@ import logging
 from datetime import datetime
 import sqlite3
 import csv
+import sys
 
 # Remove or comment out the following line to avoid interfering with main logger
 # logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 # Constants
-TBC_CERT_BASE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'tbc_certificates')
-print("DEBUG: TBC_CERT_BASE_PATH =", TBC_CERT_BASE_PATH)
+# Always resolve tbc_certificates relative to the src directory
+TBC_CERT_BASE_PATH = os.path.abspath('../tbc_certificates')
+print(f"DEBUG: TBC_CERT_BASE_PATH = {TBC_CERT_BASE_PATH}", file=sys.stderr)
 
 # TLS certificate checklist for each company
 TLS_CERTIFICATE_STATUS = {}
@@ -119,7 +121,9 @@ def get_cert_paths(company_abbr):
     folder_path = os.path.join(TBC_CERT_BASE_PATH, company_name)
     cert_file = os.path.join(folder_path, 'server_cert.pem')
     key_file = os.path.join(folder_path, 'key_unencrypted.pem')
-    # Check existence and update checklist
+    # Debug print for the first company
+    if company_abbr == list(CERTIFICATE_COMPANIES.keys())[0]:
+        print(f"DEBUG: Checking cert path for {company_abbr}: {cert_file}", file=sys.stderr)
     TLS_CERTIFICATE_STATUS[company_abbr] = {
         'server_cert.pem': os.path.exists(cert_file),
         'key_unencrypted.pem': os.path.exists(key_file)

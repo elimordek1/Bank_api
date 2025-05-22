@@ -45,6 +45,26 @@ Bank_api/
    pip install -r requirements.txt
    ```
 
+## Running the ETL Process
+
+**Important:** You must run the ETL from the `src` directory using the `-m` flag so that Python recognizes the package structure correctly.
+
+```sh
+cd src
+python -m bank_api.main
+```
+
+This will execute the ETL pipeline, fetching transactions and currency rates, and writing them to the database.
+
+### Troubleshooting
+
+- **ModuleNotFoundError: No module named 'bank_api'**
+  - Make sure you are running the ETL from the `src` directory using the `-m` flag as shown above.
+
+- **TLS Certificate Errors**
+  - If you see errors like `Could not find the TLS certificate file`, ensure that the required certificate files (e.g., `server_cert.pem`, `key_unencrypted.pem`) exist in the correct subfolders under `src/tbc_certificates/` for each company.
+  - The ETL will print a checklist of missing certificates at the end of the run. Place the required files in the indicated folders to resolve these errors.
+
 ## Usage
 ### Run the ETL Pipeline
 The main ETL process is run via the following command from the project root:
