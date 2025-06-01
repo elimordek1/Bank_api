@@ -5,22 +5,16 @@ import json
 import os
 import pandas as pd
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
-import csv
-import sys
+import ast
 
-# Remove or comment out the following line to avoid interfering with main logger
-# logging.basicConfig(level=logging.INFO)
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 # Constants
-# Always resolve tbc_certificates relative to the src directory
-TBC_CERT_BASE_PATH = os.path.abspath('../tbc_certificates')
-print(f"DEBUG: TBC_CERT_BASE_PATH = {TBC_CERT_BASE_PATH}", file=sys.stderr)
-
-# TLS certificate checklist for each company
-TLS_CERTIFICATE_STATUS = {}
+TBC_CERT_BASE_PATH = r"C:\Users\arkik\DataspellProjects\POLI_BANK\tbc_certificates"
 
 # Abbreviation map
 CERTIFICATE_COMPANIES = {
@@ -119,29 +113,18 @@ def remove_namespaces(data):
 def get_cert_paths(company_abbr):
     company_name = CERTIFICATE_COMPANIES[company_abbr]
     folder_path = os.path.join(TBC_CERT_BASE_PATH, company_name)
-    cert_file = os.path.join(folder_path, 'server_cert.pem')
-    key_file = os.path.join(folder_path, 'key_unencrypted.pem')
-    # Debug print for the first company
-    if company_abbr == list(CERTIFICATE_COMPANIES.keys())[0]:
-        print(f"DEBUG: Checking cert path for {company_abbr}: {cert_file}", file=sys.stderr)
-    TLS_CERTIFICATE_STATUS[company_abbr] = {
-        'server_cert.pem': os.path.exists(cert_file),
-        'key_unencrypted.pem': os.path.exists(key_file)
-    }
     return (
-        cert_file,
-        key_file,
+        os.path.join(folder_path, 'server_cert.pem'),
+        os.path.join(folder_path, 'key_unencrypted.pem'),
     )
 
-def read_accounts_from_excel(excel_file=None):
-    if excel_file is None:
-        PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) )
-        excel_file = os.path.join(PROJECT_ROOT, 'data', 'Banks.xlsx')
+def read_accounts_from_excel(excel_file='Banks.xlsx'):
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
     except Exception as e:
         _logger.error(f"Error reading Excel file: {e}")
         return pd.DataFrame()
+
     df['company'] = df['ID'].apply(lambda x: x.split(' ')[2])
     df['currency'] = df['ID'].apply(lambda x: x.split(' ')[1])
     df['bank_name'] = df['ID'].apply(lambda x: x.split(' ')[0])
@@ -297,18 +280,17 @@ def get_all_transactions(start_date, end_date):
         DataFrame: All transactions
     """
     accounts_df = read_accounts_from_excel()
-    required_cols = {'company', 'currency', 'account_number'}
-    if accounts_df.empty or not required_cols.issubset(accounts_df.columns):
-        _logger.warning("Accounts DataFrame is empty or missing required columns.")
-        return pd.DataFrame()
     all_transactions = []
+
     for _, row in accounts_df.iterrows():
         company = row['company']
         currency = row['currency']
         account_number = row['account_number']
+
         if company not in TBC_CREDENTIALS:
-            _logger.warning(f"No credentials for company: {company}. Skipping.")
+            _logger.warning(f"No credentials for company: {company}")
             continue
+
         try:
             transactions = get_transactions(
                 company,
@@ -320,8 +302,11 @@ def get_all_transactions(start_date, end_date):
             all_transactions.extend(transactions)
         except Exception as e:
             _logger.error(f"Failed to get transactions for {company} {account_number}: {str(e)}")
+
+    # Convert to DataFrame
     if all_transactions:
         df = pd.DataFrame(all_transactions)
+        df['amount'] = df['amount'].apply(lambda x: float(x['amount']))
         return df
     else:
         _logger.warning("No transactions found for the specified period")
@@ -338,50 +323,237 @@ def write_transactions_to_sqlite(df, db_path='bank_data.db', table_name='tbc_tra
         df.to_sql(table_name, conn, if_exists='append', index=False)
         _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
 
-def print_tls_certificate_checklist():
-    print("\nTLS Certificate Checklist:")
-    for company, status in TLS_CERTIFICATE_STATUS.items():
-        print(f"{company}:")
-        for cert, exists in status.items():
-            print(f"  {cert}: {'FOUND' if exists else 'MISSING'}")
+def get_last_successful_date(db_path='bank_data.db', table_name='download_log'):
+    """
+    Get the last successful download date from the download log table.
 
-def export_tls_certificate_checklist_csv(path='tls_certificate_checklist.csv'):
-    with open(path, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Company', 'server_cert.pem', 'key_unencrypted.pem'])
-        for company, status in TLS_CERTIFICATE_STATUS.items():
-            writer.writerow([
-                company,
-                'FOUND' if status.get('server_cert.pem') else 'MISSING',
-                'FOUND' if status.get('key_unencrypted.pem') else 'MISSING'
-            ])
+    Returns:
+        str: Last successful date in YYYY-MM-DD format, or None if no records exist
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
 
-def export_tls_certificate_checklist_json(path='tls_certificate_checklist.json'):
-    with open(path, 'w') as jsonfile:
-        json.dump(TLS_CERTIFICATE_STATUS, jsonfile, indent=2)
+            # Create table if it doesn't exist
+            cursor.execute(f'''
+                CREATE TABLE IF NOT EXISTS {table_name} (
+                    date TEXT PRIMARY KEY,
+                    status TEXT,
+                    transaction_count INTEGER,
+                    timestamp TEXT
+                )
+            ''')
 
-def log_tls_certificate_checklist(logger):
-    logger.info('TLS Certificate Checklist:')
-    for company, status in TLS_CERTIFICATE_STATUS.items():
-        logger.info(f"{company}: server_cert.pem={'FOUND' if status.get('server_cert.pem') else 'MISSING'}, key_unencrypted.pem={'FOUND' if status.get('key_unencrypted.pem') else 'MISSING'}")
+            # Get the last successful date
+            cursor.execute(f'''
+                SELECT date FROM {table_name} 
+                WHERE status = 'success' 
+                ORDER BY date DESC 
+                LIMIT 1
+            ''')
 
-def create_missing_cert_folders():
-    for company_name in CERTIFICATE_COMPANIES.values():
-        folder_path = os.path.join(TBC_CERT_BASE_PATH, company_name)
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
+            result = cursor.fetchone()
+            return result[0] if result else None
+
+    except Exception as e:
+        _logger.error(f"Error getting last successful date: {e}")
+        return None
+
+def log_download_status(date, status, transaction_count=0, db_path='bank_data.db', table_name='download_log'):
+    """
+    Log the download status for a specific date.
+
+    Args:
+        date (str): Date in YYYY-MM-DD format
+        status (str): 'success' or 'failed'
+        transaction_count (int): Number of transactions downloaded
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+
+            # Insert or replace the log entry
+            cursor.execute(f'''
+                INSERT OR REPLACE INTO {table_name} 
+                (date, status, transaction_count, timestamp) 
+                VALUES (?, ?, ?, ?)
+            ''', (date, status, transaction_count, datetime.now().isoformat()))
+
+            conn.commit()
+            _logger.info(f"Logged download status for {date}: {status} ({transaction_count} transactions)")
+
+    except Exception as e:
+        _logger.error(f"Error logging download status: {e}")
+
+def get_next_date(date_str):
+    """
+    Get the next date from a given date string.
+
+    Args:
+        date_str (str): Date in YYYY-MM-DD format
+
+    Returns:
+        str: Next date in YYYY-MM-DD format
+    """
+    date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+    next_date = date_obj + timedelta(days=1)
+    return next_date.strftime('%Y-%m-%d')
+
+def get_today_date():
+    """
+    Get today's date in YYYY-MM-DD format.
+
+    Returns:
+        str: Today's date in YYYY-MM-DD format
+    """
+    return datetime.now().strftime('%Y-%m-%d')
+
+def download_missing_days(start_date=None, max_retries=3):
+    """
+    Download transactions for missing days between last successful date and today.
+
+    Args:
+        start_date (str, optional): Override start date. If None, uses last successful date + 1
+        max_retries (int): Maximum number of retries for failed downloads
+    """
+    today = get_today_date()
+
+    if start_date is None:
+        last_successful_date = get_last_successful_date()
+        if last_successful_date is None:
+            # If no previous downloads, start from 30 days ago
+            start_date_obj = datetime.now() - timedelta(days=3)
+            start_date = start_date_obj.strftime('%Y-%m-%d')
+            _logger.info(f"No previous downloads found. Starting from {start_date}")
+        else:
+            start_date = get_next_date(last_successful_date)
+            _logger.info(f"Last successful download: {last_successful_date}. Starting from {start_date}")
+
+    current_date = start_date
+    total_downloaded = 0
+
+    while current_date < today:
+        _logger.info(f"Processing date: {current_date}")
+
+        retry_count = 0
+        success = False
+
+        while retry_count < max_retries and not success:
+            try:
+                # Download transactions for current date
+                df = get_all_transactions(current_date, current_date)
+
+                # Write to database (even if empty)
+                if not df.empty:
+                    write_transactions_to_sqlite(df)
+                    transaction_count = len(df)
+                    total_downloaded += transaction_count
+                    _logger.info(f"Downloaded {transaction_count} transactions for {current_date}")
+                else:
+                    transaction_count = 0
+                    _logger.info(f"No transactions found for {current_date}")
+
+                # Log successful download
+                log_download_status(current_date, 'success', transaction_count)
+                success = True
+
+            except Exception as e:
+                retry_count += 1
+                _logger.error(f"Attempt {retry_count} failed for {current_date}: {str(e)}")
+
+                if retry_count >= max_retries:
+                    # Log failed download
+                    log_download_status(current_date, 'failed', 0)
+                    _logger.error(f"Max retries reached for {current_date}. Moving to next date.")
+                    success = True  # Move to next date even if failed
+
+        # Move to next date
+        current_date = get_next_date(current_date)
+
+    _logger.info(f"Download process completed. Total transactions downloaded: {total_downloaded}")
+    return total_downloaded
+
+def get_download_summary(db_path='bank_data.db', table_name='download_log'):
+    """
+    Get a summary of download history.
+
+    Returns:
+        dict: Summary statistics
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+
+            # Get summary statistics
+            cursor.execute(f'''
+                SELECT 
+                    COUNT(*) as total_days,
+                    SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as successful_days,
+                    SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_days,
+                    SUM(CASE WHEN status = 'success' THEN transaction_count ELSE 0 END) as total_transactions,
+                    MIN(date) as first_date,
+                    MAX(date) as last_date
+                FROM {table_name}
+            ''')
+
+            result = cursor.fetchone()
+
+            if result and result[0] > 0:
+                return {
+                    'total_days': result[0],
+                    'successful_days': result[1],
+                    'failed_days': result[2],
+                    'total_transactions': result[3],
+                    'first_date': result[4],
+                    'last_date': result[5]
+                }
+            else:
+                return {
+                    'total_days': 0,
+                    'successful_days': 0,
+                    'failed_days': 0,
+                    'total_transactions': 0,
+                    'first_date': None,
+                    'last_date': None
+                }
+
+    except Exception as e:
+        _logger.error(f"Error getting download summary: {e}")
+        return None
 
 # Example usage
 if __name__ == "__main__":
-    start_date = "2025-05-01"
-    end_date = "2025-05-10"
+    try:
+        # Show current summary
+        summary = get_download_summary()
+        if summary:
+            print("=== Download Summary ===")
+            print(f"Total days processed: {summary['total_days']}")
+            print(f"Successful downloads: {summary['successful_days']}")
+            print(f"Failed downloads: {summary['failed_days']}")
+            print(f"Total transactions: {summary['total_transactions']}")
+            print(f"Date range: {summary['first_date']} to {summary['last_date']}")
+            print()
 
-    df = get_all_transactions(start_date, end_date)
-    write_transactions_to_sqlite(df)
+        # Download missing days
+        print("=== Starting Download Process ===")
+        total_downloaded = download_missing_days()
 
-    if not df.empty:
-        df.to_excel('tbc_transactions.xlsx', index=False)
-        print(f"Saved {len(df)} transactions to tbc_transactions.xlsx")
-        print(f"Sample data: {df.head(2).to_dict('records')}")
-    else:
-        print("No transactions found")
+        print(f"\n=== Process Complete ===")
+        print(f"Total new transactions downloaded: {total_downloaded}")
+
+        # Show updated summary
+        summary = get_download_summary()
+        if summary:
+            print("\n=== Updated Summary ===")
+            print(f"Total days processed: {summary['total_days']}")
+            print(f"Successful downloads: {summary['successful_days']}")
+            print(f"Failed downloads: {summary['failed_days']}")
+            print(f"Total transactions: {summary['total_transactions']}")
+            print(f"Date range: {summary['first_date']} to {summary['last_date']}")
+
+    except KeyboardInterrupt:
+        print("\nProcess interrupted by user")
+    except Exception as e:
+        _logger.error(f"Main process error: {e}")
+        print(f"Error: {e}")

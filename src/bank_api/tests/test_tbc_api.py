@@ -1,7 +1,11 @@
-import pytest
 from unittest.mock import patch, MagicMock
 import pandas as pd
 from bank_api.api import tbc_api
+from unittest.mock import patch, MagicMock
+
+import pandas as pd
+from bank_api.api import tbc_api
+
 
 @patch('bank_api.api.tbc_api.read_accounts_from_excel')
 @patch('bank_api.api.tbc_api.get_transactions')

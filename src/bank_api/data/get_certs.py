@@ -1,5 +1,5 @@
-import subprocess
 import os
+import subprocess
 
 # Dictionary of company folders and their corresponding .pfx passwords
 certificates = {

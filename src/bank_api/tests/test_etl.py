@@ -1,8 +1,8 @@
-import pytest
-from unittest.mock import patch, MagicMock
-import pandas as pd
+from unittest.mock import patch
 
 import bank_api.main as main_module
+import pandas as pd
+
 
 @patch('bank_api.main.get_bog_transactions')
 @patch('bank_api.main.write_bog_to_sqlite')

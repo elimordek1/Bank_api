@@ -1,8 +1,11 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from bank_api.api.bog_api import get_all_transactions as get_bog_transactions, write_transactions_to_sqlite as write_bog_to_sqlite
-from bank_api.api.tbc_api import get_all_transactions as get_tbc_transactions, write_transactions_to_sqlite as write_tbc_to_sqlite
+from bank_api.api.bog_api import get_all_transactions as get_bog_transactions, \
+    write_transactions_to_sqlite as write_bog_to_sqlite
+from bank_api.api.tbc_api import get_all_transactions as get_tbc_transactions, \
+    write_transactions_to_sqlite as write_tbc_to_sqlite
 from bank_api.data.get_currency_daily import get_daily_currency_rates, write_rates_to_sqlite
+
 
 def setup_logger():
     logger = logging.getLogger("bank_api_etl")

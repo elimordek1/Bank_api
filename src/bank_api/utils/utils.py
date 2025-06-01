@@ -1,8 +1,9 @@
+import base64
 import logging
+import os
+
 import pandas as pd
 import requests
-import base64
-import os
 
 _logger = logging.getLogger(__name__)
 

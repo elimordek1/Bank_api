@@ -1,7 +1,6 @@
-import pytest
 import pandas as pd
 from bank_api.utils import utils
-import os
+
 
 # Test read_accounts_from_excel with a known bank
 # This test assumes Banks.xlsx exists in the data directory and has at least one BOG or TBC account

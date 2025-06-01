@@ -1,8 +1,9 @@
-import requests
+import json
 import os
 import xml.etree.ElementTree as Et
+
+import requests
 import xmltodict
-import json
 
 # Constants
 TBC_URL = "https://secdbi.tbconline.ge/dbi/dbiService"

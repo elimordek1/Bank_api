@@ -1,7 +1,11 @@
-import pytest
 from unittest.mock import patch, MagicMock
 import pandas as pd
 from bank_api.data import get_currency_daily
+from unittest.mock import patch, MagicMock
+
+import pandas as pd
+from bank_api.data import get_currency_daily
+
 
 @patch('bank_api.data.get_currency_daily.get_bog_exchange_rate')
 @patch('bank_api.data.get_currency_daily.get_tbc_exchange_rates')
