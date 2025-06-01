@@ -5,38 +5,21 @@ import sqlite3
 import datetime
 import pandas as pd
 import requests
+import json
+from utils.get_currency_daily_nbg import fetch_nbg_currency_df
 
 # Setup logging (ensure this is configured once at the start)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 _logger = logging.getLogger(__name__)
 
 # Your company credentials (keeping this as is)
-COMPANY_CREDENTIALS_BOG = {
-    'RGG': {'client_id': '633822f9-a298-49e0-9545-97b78e4d9b04',
-            'client_secret': 'fb73a373-d464-4052-b9a4-2fee0a83c9e3'},
-    'MRG': {'client_id': 'e86520fd-3861-40fb-841e-3a90cc9ae35f',
-            'client_secret': '67c7d183-e133-4741-8496-5745b94f2de4'},
-    'SRG': {'client_id': '8f53ad44-9cfc-4f3d-a28c-ca0ba4867b88',
-            'client_secret': 'ef024a17-44a0-4103-b3c6-5787a291da0b'},
-    'PRG': {'client_id': 'd6749fac-3fe7-4840-99fa-dd7a55eb311f',
-            'client_secret': 'ebc950f3-d613-40dd-b93a-6790300bfabd'},
-    'MHR': {'client_id': 'fc232347-1f78-40a2-8891-796c9108e8ee',
-            'client_secret': 'fd121084-7f54-4af2-941b-a53205f88af5'},
-    'RGH': {'client_id': 'e68cb474-6574-4f9c-9910-27284092627d',
-            'client_secret': '769009c4-886a-4793-9b9d-a1945ea38e81'},
-    'MSG': {'client_id': '36de8978-c8e4-48c2-aa9a-023071c42a40',
-            'client_secret': '76979b9e-0f86-48da-9d8e-bfbf4d7ffacd'},
-    'FRG': {'client_id': '7910185a-bef6-4fab-80e2-529953814eef',
-            'client_secret': '1b3da861-8a75-42fa-810a-769ac93a6463'},
-    'BRG': {'client_id': 'c27815b4-0c91-4d13-a9ed-d4f403adf1b7',
-            'client_secret': '1d666108-2fcd-4a56-b30d-542fede107b5'},
-}
-
+# read from secrets folder
+COMPANY_CREDENTIALS_BOG = json.load(open('.secrets/bog_company_creds.json'))
 
 def read_accounts_from_excel(excel_file=None):
     if excel_file is None:
         PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__name__)))))
-        excel_file = os.path.join(PROJECT_ROOT, 'data', 'Banks.xlsx')
+        excel_file = os.path.join(PROJECT_ROOT, 'configs', 'banks.xlsx')
     _logger.info(f"Attempting to read Excel file: {excel_file}")
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
@@ -373,50 +356,6 @@ def write_transactions_to_sqlite(df, db_path='bank_data.db', table_name='bog_tra
     with sqlite3.connect(db_path) as conn:
         df.to_sql(table_name, conn, if_exists='append', index=False)
         _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
-
-
-def fetch_nbg_currency_df(date=None):
-    if not date:
-        date = datetime.date.today()
-    date_str = date.strftime('%Y-%m-%d')
-    url = f'https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json/?date={date_str}'
-
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-
-        if not data or not isinstance(data, list) or 'currencies' not in data[0]:
-            _logger.warning(f"No valid data for {date_str} from NBG API.")
-            return pd.DataFrame()
-
-        currencies = data[0]['currencies']
-        records = []
-        for c in currencies:
-            code = c.get('code')
-            rate = float(c.get('rate', 0))
-            quantity = float(c.get('quantity', 1))
-            rate_per_unit = rate / quantity if quantity else 0
-            records.append({
-                'date': date_str,
-                'currency': code,
-                'rate_per_unit': rate_per_unit
-            })
-
-        df = pd.DataFrame(records)
-        _logger.info(f"Successfully fetched NBG currency rates for {date_str}.")
-        return df
-
-    except requests.exceptions.Timeout:
-        _logger.error(f"NBG currency API request timed out for {date_str}.")
-        return pd.DataFrame()
-    except requests.exceptions.RequestException as e:
-        _logger.error(f"Failed to fetch NBG rates for {date_str}: {e}")
-        return pd.DataFrame()
-    except Exception as e:
-        _logger.error(f"An unexpected error occurred while fetching NBG rates for {date_str}: {e}")
-        return pd.DataFrame()
-
 
 # Example usage
 if __name__ == '__main__':

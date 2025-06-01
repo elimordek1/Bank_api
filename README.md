@@ -17,14 +17,23 @@ This project is an ETL (Extract, Transform, Load) pipeline for aggregating and p
 ## Directory Structure
 ```
 Bank_api/
-└── src/
-    └── bank_api/
-        ├── api/         # Bank API integrations (BOG, TBC)
-        ├── config/      # Configuration files (if any)
-        ├── data/        # Data processing and currency modules
-        ├── tests/       # Unit tests
-        ├── utils/       # Utility functions
-        └── main.py      # Main ETL entry point
+├── src/
+│   ├── bog_api.py
+│   ├── tbc_api.py
+│   ├── building_excel.py
+│   ├── main.py
+│   └── __init__.py
+├── configs/
+│   └── banks.xlsx
+├── data/
+├── tests/
+├── utils/
+├── notebooks/
+├── docs/
+├── .secrets/
+│   ├── tbc_certificates/
+│   └── tbc_credentials.xlsx
+└── ...
 ```
 
 ## Installation
@@ -42,34 +51,40 @@ Bank_api/
    ```
 3. **Install dependencies:**
    ```sh
-   pip install -r requirements.txt
+   pip install -r requirements.txt  # Or use `uv pip install -r requirements.txt` if using uv
    ```
 
 ## Running the ETL Process
 
-**Important:** You must run the ETL from the `src` directory using the `-m` flag so that Python recognizes the package structure correctly.
+**Important:** Run the ETL from the `src` directory so that imports work correctly.
 
 ```sh
 cd src
-python -m bank_api.main
+python main.py
+```
+
+Or, from the project root:
+
+```sh
+python src/main.py
 ```
 
 This will execute the ETL pipeline, fetching transactions and currency rates, and writing them to the database.
 
 ### Troubleshooting
 
-- **ModuleNotFoundError: No module named 'bank_api'**
-  - Make sure you are running the ETL from the `src` directory using the `-m` flag as shown above.
+- **ModuleNotFoundError**
+  - Make sure you are running the ETL from the `src` directory or using the correct path as shown above.
 
 - **TLS Certificate Errors**
-  - If you see errors like `Could not find the TLS certificate file`, ensure that the required certificate files (e.g., `server_cert.pem`, `key_unencrypted.pem`) exist in the correct subfolders under `src/tbc_certificates/` for each company.
+  - If you see errors like `Could not find the TLS certificate file`, ensure that the required certificate files (e.g., `server_cert.pem`, `key_unencrypted.pem`) exist in the correct subfolders under `.secrets/tbc_certificates/` for each company.
   - The ETL will print a checklist of missing certificates at the end of the run. Place the required files in the indicated folders to resolve these errors.
 
 ## Usage
 ### Run the ETL Pipeline
-The main ETL process is run via the following command from the project root:
+The main ETL process is run via the following command from the `src` directory:
 ```sh
-python -m bank_api.main
+python main.py
 ```
 - This will fetch transactions and currency rates for the hardcoded date range in `main.py` and write results to `bank_data.db`.
 - You can modify the `start_date`, `end_date`, or currency list in `main.py` as needed.
@@ -79,8 +94,8 @@ python -m bank_api.main
 - It will contain tables for transactions and currency rates.
 
 ## Configuration
-- **Bank account details** are expected in an Excel file (e.g., `data/Banks.xlsx`).
-- API credentials and endpoints should be configured in the respective modules under `api/`.
+- **Bank account details** are expected in an Excel file (e.g., `configs/banks.xlsx`).
+- API credentials and certificates should be placed in the `.secrets/` directory as required by the ETL.
 - For production use, consider parameterizing dates and sensitive information via environment variables or config files.
 
 ## Dependencies
@@ -100,10 +115,10 @@ python -m bank_api.main
   - **Graceful database writes**: No data is written if the DataFrame is empty, preventing corrupt or partial records.
 
 ## Testing
-- Unit tests are located in `src/bank_api/tests/`.
+- Unit tests are located in `tests/`.
 - To run all tests:
   ```sh
-  pytest src/bank_api/tests
+  pytest tests
   ```
 - **Test coverage includes:**
   - ETL pipeline integration

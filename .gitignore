@@ -41,11 +41,13 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
+.coverage/
 .cache
 nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+.pytest_cache/
 .pytest_cache/
 
 # Translations
@@ -124,7 +126,6 @@ ENV/
 
 # Output files
 *.out
-*.txt
 
 # Certificates and sensitive data
 *.pem
@@ -134,4 +135,26 @@ ENV/
 # Misc
 *.bak
 *.swp
-*~ 
+*~
+
+# Environment variables
+.env
+.env.*
+
+# PEP 582; used by some tools
+__pypackages__/
+
+# uv package manager
+.uv/
+
+# Project secrets
+.secrets/
+
+# (Optional) uv lock file
+# uv.lock
+
+# (Optional) Ignore all Jupyter notebooks
+# *.ipynb
+
+# (Optional) __pycache__ in all subfolders
+# **/__pycache__/
