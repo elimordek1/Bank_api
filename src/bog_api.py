@@ -6,6 +6,7 @@ import datetime
 import pandas as pd
 import requests
 import json
+import sys
 from utils.get_currency_daily_nbg import fetch_nbg_currency_df
 
 # Setup logging (ensure this is configured once at the start)
@@ -14,13 +15,29 @@ _logger = logging.getLogger(__name__)
 
 # Your company credentials (keeping this as is)
 # read from secrets folder
-COMPANY_CREDENTIALS_BOG = json.load(open('.secrets/bog_company_creds.json'))
+try:
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+except NameError:
+    PROJECT_ROOT = os.getcwd()  # Fallback to current working directory
+
+# Correct path to the secrets file
+SECRETS_PATH = os.path.join(PROJECT_ROOT, '.secrets', 'bog_company_creds.json')
+
+# Load the JSON file
+try:
+    COMPANY_CREDENTIALS_BOG = json.load(open(SECRETS_PATH))
+except FileNotFoundError:
+    _logger.error(f"File not found: {SECRETS_PATH}. Please ensure it exists.")
+    raise
+
 
 def read_accounts_from_excel(excel_file=None):
     if excel_file is None:
-        PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__name__)))))
+        try:
+            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        except NameError:
+            PROJECT_ROOT = os.getcwd()  # Fallback to current working directory
         excel_file = os.path.join(PROJECT_ROOT, 'configs', 'banks.xlsx')
-    _logger.info(f"Attempting to read Excel file: {excel_file}")
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
         _logger.info(f"Successfully read Excel file. Initial DataFrame shape: {df.shape}")
@@ -357,6 +374,92 @@ def write_transactions_to_sqlite(df, db_path='bank_data.db', table_name='bog_tra
         df.to_sql(table_name, conn, if_exists='append', index=False)
         _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
 
+def fetch_transactions_for_specific_day(specific_date):
+    """
+    Fetches transactions for all BOG accounts for a specific day.
+
+    Args:
+        specific_date (str): The date for which transactions are to be fetched (YYYY-MM-DD).
+    """
+    try:
+        # Validate the date format
+        specific_date_obj = datetime.datetime.strptime(specific_date, '%Y-%m-%d').date()
+    except ValueError:
+        _logger.error(f"Invalid date format: {specific_date}. Please use YYYY-MM-DD.")
+        return pd.DataFrame()
+
+    initialize_db()  # Ensure the database and success_log table exist
+    accounts_df = read_accounts_from_excel()
+
+    if accounts_df.empty:
+        _logger.error("No accounts found in the Excel file. Cannot proceed.")
+        return pd.DataFrame()
+
+    required_cols = {'company', 'currency', 'account_number'}
+    if not required_cols.issubset(accounts_df.columns):
+        _logger.error(f"Accounts DataFrame is missing required columns. Expected: {required_cols}, Found: {accounts_df.columns.tolist()}")
+        return pd.DataFrame()
+
+    all_records = []
+    for _, row in accounts_df.iterrows():
+        company = row['company']
+        currency = row['currency']
+        account_number = row['account_number']
+
+        creds = COMPANY_CREDENTIALS_BOG.get(company)
+        if not creds:
+            _logger.warning(f"No credentials for company: {company}. Skipping.")
+            continue
+
+        records = fetch_transactions_for_account(
+            creds['client_id'],
+            creds['client_secret'],
+            account_number,
+            currency,
+            specific_date,
+            specific_date,
+            company=company
+        )
+        if records:
+            all_records.extend(records)
+
+    if all_records:
+        all_keys = set().union(*(d.keys() for d in all_records))
+        for record in all_records:
+            for key in all_keys:
+                record.setdefault(key, None)
+
+        df_result = pd.DataFrame(all_records)
+        _logger.info(f"Successfully fetched transactions for {specific_date}. Total records: {len(df_result)}")
+        return df_result
+
+    _logger.warning(f"No transactions fetched for {specific_date}. Returning empty DataFrame.")
+    return pd.DataFrame()
+
+def fetch_and_write_transactions_for_specific_day(specific_date, db_path='bank_data.db', table_name='bog_transactions'):
+    """
+    Fetches transactions for all BOG accounts for a specific day and writes them to the SQLite database.
+
+    Args:
+        specific_date (str): The date for which transactions are to be fetched (YYYY-MM-DD).
+        db_path (str): Path to the SQLite database file.
+        table_name (str): Name of the table to write transactions to.
+    """
+    # Fetch transactions for the specific day
+    df_transactions = fetch_transactions_for_specific_day(specific_date)
+
+    if df_transactions.empty:
+        _logger.warning(f"No transactions fetched for {specific_date}. Nothing to write to the database.")
+        return
+
+    # Write transactions to the SQLite database
+    write_transactions_to_sqlite(df_transactions, db_path=db_path, table_name=table_name)
+    _logger.info(f"Transactions for {specific_date} successfully written to the database.")
+    return df_transactions
+# Example usage
+
+
+
 # Example usage
 if __name__ == '__main__':
     # Initialize the database (creates success_log table if not exists)
@@ -364,53 +467,21 @@ if __name__ == '__main__':
 
     # Define the end date for fetching transactions
     # Set to today's date in Tbilisi for accurate daily fetches
-    today = datetime.date.today()
-    end_date_for_fetch = today.strftime('%Y-%m-%d')
+ #   today = datetime.date.today()
+ #   end_date_for_fetch = today.strftime('%Y-%m-%d')
 
-    _logger.info(f"Starting transaction fetch for end date: {end_date_for_fetch}")
-    df = get_all_transactions(end_date_for_fetch)
+  #  _logger.info(f"Starting transaction fetch for end date: {end_date_for_fetch}")
+  #  df = get_all_transactions(end_date_for_fetch)
 
-    if not df.empty:
-        write_transactions_to_sqlite(df)
-        print("\n--- Fetched Transactions Sample (first 5 rows) ---")
-        print(df.head())
-        print(f"\nTotal transactions fetched: {len(df)}")
+   # if not df.empty:
+     #   write_transactions_to_sqlite(df)
+  #      print("\n--- Fetched Transactions Sample (first 5 rows) ---")
+   #     print(df.head())
+  #      print(f"\nTotal transactions fetched: {len(df)}")
 
-        # Example of filtering and adding NBG rates (as in your original example)
-        # Ensure 'company' and 'currency' columns exist before filtering
-        if 'company' in df.columns and 'currency' in df.columns:
-            srg_df = df[df['company'] == 'FRG']
-            srg_df = srg_df[srg_df['currency'] == 'EUR']
+    specific_date = '2025-01-22'  # Replace with the desired date
+    df_spec_date = fetch_and_write_transactions_for_specific_day(specific_date)
 
-            if not srg_df.empty:
-                # Get the date from the first entry to fetch NBG rate for that specific day
-                # Handle potential None or missing 'entry_date'
-                nbg_date_str = None
-                if 'entry_date' in srg_df.columns and not srg_df['entry_date'].empty:
-                    first_entry_date = srg_df['entry_date'].dropna().iloc[0]
-                    nbg_date_str = first_entry_date.split('T')[0] if isinstance(first_entry_date, str) else None
 
-                if nbg_date_str:
-                    df_nbg = fetch_nbg_currency_df(datetime.datetime.strptime(nbg_date_str, '%Y-%m-%d').date())
 
-                    if not df_nbg.empty:
-                        srg_df = srg_df.merge(df_nbg[['currency', 'rate_per_unit']], on='currency', how='left')
-                        # Calculate rate_per_unit_live, handling division by zero and NaNs
-                        srg_df['rate_per_unit_live'] = (srg_df['entry_amount_debit_base'].fillna(0) + srg_df['entry_amount_credit_base'].fillna(0)) / \
-                                                       (srg_df['entry_amount_debit'].fillna(0) + srg_df['entry_amount_credit'].fillna(0))
-                        # Replace inf values with NaN which pandas can handle better
-                        srg_df['rate_per_unit_live'] = srg_df['rate_per_unit_live'].replace([float('inf'), -float('inf')], pd.NA)
-
-                        print("\n--- FRG EUR Transactions with NBG Rates Sample (first 5 rows) ---")
-                        print(srg_df.head())
-                    else:
-                        _logger.warning("NBG currency data not available for merging.")
-                else:
-                    _logger.warning("Could not determine a valid entry date for NBG currency lookup.")
-            else:
-                _logger.info("No FRG EUR transactions found to process for NBG rates.")
-        else:
-            _logger.error("DataFrame 'df' is missing 'company' or 'currency' column, skipping NBG rate processing.")
-    else:
-        _logger.warning("No transactions were fetched, so no data to process or write to database.")
-        print("\n--- No transactions fetched. Check logs for errors. ---")
+#%%

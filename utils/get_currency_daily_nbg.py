@@ -3,12 +3,36 @@ import datetime
 import pandas as pd
 import sqlite3
 import logging
+import os
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
-DB_PATH = r'C:\Users\arkik\DataspellProjects\POLI_BANK\src\bank_api\api\bank_data.db'
+# Dynamically determine the project root directory (POLI_BANK)
+def get_project_root():
+    try:
+        current_dir = os.path.dirname(__file__)  # __file__ works when running as a script
+    except NameError:
+        current_dir = os.getcwd()  # Fallback for interactive environments
+
+    while current_dir:
+        if os.path.basename(current_dir) == 'POLI_BANK':
+            return current_dir
+        current_dir = os.path.dirname(current_dir)
+    raise FileNotFoundError("POLI_BANK directory not found in the path hierarchy.")
+
+# Correct path to the database file
+PROJECT_ROOT = get_project_root()
+DB_PATH = os.path.join(PROJECT_ROOT, '/src/bank_data.db')
+
+print(f"Database path: {DB_PATH}")
+
+# Correct path to the database file
+PROJECT_ROOT = get_project_root()
+DB_PATH = os.path.join(PROJECT_ROOT, 'src/bank_data.db')
+
+
 TABLE_NAME = 'nbg_currency'
 
 def fetch_nbg_currency_df(date):
@@ -71,7 +95,7 @@ def fetch_and_store_missing_nbg_rates():
     today = datetime.date.today()
 
     if latest_date is None:
-        latest_date = today - datetime.timedelta(days=30)  # fallback: go 30 days back
+        latest_date = today - datetime.timedelta(days=200)  # fallback: go 30 days back
 
     current_date = latest_date + datetime.timedelta(days=1)
     while current_date <= today:

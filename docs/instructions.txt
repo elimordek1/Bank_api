@@ -1,0 +1,78 @@
+# Banking Data Processing Task
+
+## Part 1: Bank of Georgia Task
+### Objective
+For each Bank of Georgia company that has transactions (filtered by entry_date), extract data into Excel file with specific structure and calculations.
+
+## Requirements (Bank of Georgia)
+
+### 1. Excel File Structure
+- Create separate sheets for each company
+- Within each company, create two separate sheets:
+  - One sheet for foreign currency transactions
+  - One sheet for GEL (Georgian Lari) transactions
+
+### 2. Data Extraction
+- Extract all transactions filtered by entry_date
+- Group transactions by company
+- Separate transactions by currency type (foreign currency vs GEL)
+
+### 3. Bank of Georgia Revaluation Transaction
+Add one summary revaluation transaction for each Bank of Georgia company using the following formula:
+
+**(Opening balance at start of day + Turnover (Credit - Debit)) × National exchange rate - Opening balance equivalent in GEL at start of day + Turnover (Credit - Debit)**
+
+Where:
+- Opening balance = starting balance in foreign currency at beginning of day
+- Turnover = Credit - Debit (net movement in foreign currency)
+- National exchange rate = official exchange rate for the day
+- Opening balance equivalent in GEL = starting balance converted to GEL at beginning of day
+- Turnover (Credit - Debit) = net movement in GEL
+
+### 4. Output Format
+- Excel file with multiple sheets
+- Each Bank of Georgia company gets dedicated sheets (foreign currency + GEL)
+- Summary revaluation transaction added to appropriate sheet
+- All transactions organized by entry_date
+
+---
+
+## Part 2: TBC Bank Task
+### Objective
+Perform the same data processing for TBC Bank companies with identical logic and calculations.
+
+## Requirements (TBC Bank)
+
+### 1. Excel File Structure
+- Create separate sheets for each TBC Bank company
+- Within each company, create two separate sheets:
+  - One sheet for foreign currency transactions
+  - One sheet for GEL (Georgian Lari) transactions
+
+### 2. Data Extraction
+- Extract all transactions filtered by entry_date
+- Group transactions by company
+- Separate transactions by currency type (foreign currency vs GEL)
+- **Note: Column names are different from Bank of Georgia format**
+
+### 3. TBC Bank Revaluation Transaction
+Apply the same revaluation formula as Bank of Georgia:
+
+**(Opening balance at start of day + Turnover (Credit - Debit)) × National exchange rate - Opening balance equivalent in GEL at start of day + Turnover (Credit - Debit)**
+
+### 4. Output Format
+- Excel file with multiple sheets
+- Each TBC Bank company gets dedicated sheets (foreign currency + GEL)
+- Summary revaluation transaction added to appropriate sheet
+- All transactions organized by entry_date
+
+## Key Differences
+- **Bank of Georgia**: Uses specific column names and structure
+- **TBC Bank**: Same logic and calculations, but different column names/structure
+- **Processing**: Identical revaluation formula and Excel output format for both banks
+
+## Formula Breakdown (Both Banks)
+The revaluation calculation accounts for:
+1. Foreign currency position: (Opening + Net Movement) × Current Rate
+2. Minus existing GEL equivalent: Opening GEL + Net Movement GEL
+3. Result = Currency revaluation adjustment needed

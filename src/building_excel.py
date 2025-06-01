@@ -13,7 +13,7 @@ from bog_api import fetch_nbg_currency_df, initialize_db
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 _logger = logging.getLogger(__name__)
 
-def read_transactions_from_sqlite(start_date_str=None, end_date_str=None, db_path='bank_data.db', table_name='bog_transactions'):
+def read_transactions_from_sqlite(start_date_str=None, end_date_str=None, db_path='C:\\Users\\arkik\\DataspellProjects\\POLI_BANK\\src\\bank_data.db', table_name='bog_transactions'):
     """
     Reads transactions from the SQLite database within a specified date range.
 
@@ -392,17 +392,17 @@ if __name__ == '__main__':
     initialize_db()
 
     # Get today's date for the report
-    today = datetime.date.today()
+   # today = datetime.date.today()
     # Assuming you want the report for yesterday based on current date and time
     # This will be May 29, 2025
-    yesterday = today - datetime.timedelta(days=1)
-    report_date = yesterday.strftime('%Y-%m-%d')
+   # yesterday = today - datetime.timedelta(days=1)
+  #  report_date = yesterday.strftime('%Y-%m-%d')
 
     # Example usage: Generate report for yesterday
-    print(f"Attempting to generate daily bank report for {report_date}...")
-    generate_daily_bank_report(report_date)
+   # print(f"Attempting to generate daily bank report for {report_date}...")
+    #generate_daily_bank_report(report_date)
 
     # You can also generate for a specific past date, e.g.:
     # Make sure you have transactions for this date in your bank_data.db
     # print("\nAttempting to generate daily bank report for 2024-05-29...")
-    # generate_daily_bank_report('2024-05-29')
+    generate_daily_bank_report('2025-01-22')
