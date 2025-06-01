@@ -148,7 +148,7 @@ __pypackages__/
 .uv/
 
 # Project secrets
-.secrets/
+# .secrets/
 
 # (Optional) uv lock file
 # uv.lock
@@ -157,4 +157,4 @@ __pypackages__/
 # *.ipynb
 
 # (Optional) __pycache__ in all subfolders
-# **/__pycache__/
+**/__pycache__/
