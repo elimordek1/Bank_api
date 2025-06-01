@@ -7,7 +7,6 @@ import pandas as pd
 import requests
 import json
 import sys
-from utils.get_currency_daily_nbg import fetch_nbg_currency_df
 
 # Setup logging (ensure this is configured once at the start)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -481,7 +480,3 @@ if __name__ == '__main__':
 
     specific_date = '2025-01-22'  # Replace with the desired date
     df_spec_date = fetch_and_write_transactions_for_specific_day(specific_date)
-
-
-
-#%%
