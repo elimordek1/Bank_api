@@ -20,7 +20,7 @@ except NameError:
     PROJECT_ROOT = os.getcwd()  # Fallback to current working directory
 
 # Correct path to the secrets file
-SECRETS_PATH = os.path.join(PROJECT_ROOT, '.secrets', 'bog_company_creds.json')
+SECRETS_PATH = os.path.join(PROJECT_ROOT, 'secrets', 'bog_company_creds.json')
 
 # Load the JSON file
 try:
@@ -59,10 +59,15 @@ def read_accounts_from_excel(excel_file=None):
 
     # Apply operations only if columns exist
     try:
-        df['company'] = df['ID'].apply(lambda x: x.split(' ')[2] if isinstance(x, str) and len(x.split(' ')) > 2 else None)
-        df['currency'] = df['ID'].apply(lambda x: x.split(' ')[1] if isinstance(x, str) and len(x.split(' ')) > 1 else None)
-        df['bank_name'] = df['ID'].apply(lambda x: x.split(' ')[0] if isinstance(x, str) and len(x.split(' ')) > 0 else None)
-        df['account_number'] = df['Account Number'].apply(lambda x: str(x)[:-3] if isinstance(x, (str, int, float)) and len(str(x)) > 3 else x) # Convert to string first for consistent slicing
+        df['company'] = df['ID'].apply(
+            lambda x: x.split(' ')[2] if isinstance(x, str) and len(x.split(' ')) > 2 else None)
+        df['currency'] = df['ID'].apply(
+            lambda x: x.split(' ')[1] if isinstance(x, str) and len(x.split(' ')) > 1 else None)
+        df['bank_name'] = df['ID'].apply(
+            lambda x: x.split(' ')[0] if isinstance(x, str) and len(x.split(' ')) > 0 else None)
+        df['account_number'] = df['Account Number'].apply(
+            lambda x: str(x)[:-3] if isinstance(x, (str, int, float)) and len(
+                str(x)) > 3 else x)  # Convert to string first for consistent slicing
 
     except Exception as e:
         _logger.error(f"Error processing 'ID' or 'Account Number' columns in Excel: {e}")
@@ -70,10 +75,11 @@ def read_accounts_from_excel(excel_file=None):
 
     df = df[['company', 'currency', 'bank_name', 'account_number']]
     df = df[df['account_number'].notna()]
-    df = df[df['company'].notna()] # Ensure company column is not null after splitting
+    df = df[df['company'].notna()]  # Ensure company column is not null after splitting
 
     _logger.info(f"Processed Excel data. Filtered BOG accounts DataFrame shape: {df[df['bank_name'] == 'BOG'].shape}")
-    _logger.debug(f"Filtered BOG accounts DataFrame columns after processing: {df[df['bank_name'] == 'BOG'].columns.tolist()}")
+    _logger.debug(
+        f"Filtered BOG accounts DataFrame columns after processing: {df[df['bank_name'] == 'BOG'].columns.tolist()}")
     return df[df['bank_name'] == 'BOG']
 
 
@@ -138,7 +144,7 @@ def fetch_transactions_for_account(client_id, client_secret, account_number, cur
     }
 
     try:
-        response = requests.post(auth_url, headers=headers, data=data, timeout=15) # Added timeout
+        response = requests.post(auth_url, headers=headers, data=data, timeout=15)  # Added timeout
         response.raise_for_status()
         access_token = response.json().get('access_token')
         if not access_token:
@@ -160,12 +166,13 @@ def fetch_transactions_for_account(client_id, client_secret, account_number, cur
     records = []
     statement_id = None
     try:
-        response = requests.get(statement_url, headers=headers, timeout=30) # Added timeout
+        response = requests.get(statement_url, headers=headers, timeout=30)  # Added timeout
         response.raise_for_status()
         response_json = response.json()
         records = response_json.get('Records', [])
         statement_id = response_json.get('Id')
-        _logger.info(f"Retrieved statement ID: {statement_id} for account {account_number}. Found {len(records)} transactions.")
+        _logger.info(
+            f"Retrieved statement ID: {statement_id} for account {account_number}. Found {len(records)} transactions.")
 
     except requests.exceptions.Timeout:
         _logger.error(f"Statement fetching request timed out for account {account_number}.")
@@ -177,12 +184,11 @@ def fetch_transactions_for_account(client_id, client_secret, account_number, cur
         _logger.error(f"An unexpected error occurred during transaction fetch for account {account_number}: {e}")
         return []
 
-
     daily_summaries = {}
     if statement_id:
         summary_url = f"https://api.businessonline.ge/api/statement/summary/{account_number}/{currency}/{statement_id}"
         try:
-            summary_response = requests.get(summary_url, headers=headers, timeout=15) # Added timeout
+            summary_response = requests.get(summary_url, headers=headers, timeout=15)  # Added timeout
             summary_response.raise_for_status()
             summary_json = summary_response.json()
             for summary in summary_json.get('DailySummaries', []):
@@ -191,14 +197,16 @@ def fetch_transactions_for_account(client_id, client_secret, account_number, cur
                     summary_date = summary_date_full.split('T')[0]
                     daily_summaries[summary_date] = summary
                 else:
-                    _logger.warning(f"Daily summary for account {account_number} contains an entry with no 'Date'. Skipping this entry.")
+                    _logger.warning(
+                        f"Daily summary for account {account_number} contains an entry with no 'Date'. Skipping this entry.")
             _logger.info(f"Retrieved {len(daily_summaries)} daily summaries for account {account_number}")
         except requests.exceptions.Timeout:
             _logger.error(f"Daily summaries request timed out for account {account_number}.")
         except requests.exceptions.RequestException as e:
             _logger.error(f"Failed to fetch daily summaries for account {account_number}: {e}")
         except Exception as e:
-            _logger.error(f"An unexpected error occurred during daily summaries fetch for account {account_number}: {e}")
+            _logger.error(
+                f"An unexpected error occurred during daily summaries fetch for account {account_number}: {e}")
 
     flattened = []
     for r in records:
@@ -214,8 +222,8 @@ def fetch_transactions_for_account(client_id, client_secret, account_number, cur
             if closing_balance is not None:
                 opening_balance = closing_balance - credit_sum + debit_sum
         else:
-            _logger.warning(f"No daily summary found for date {entry_date_str} for account {account_number}. Opening/Closing balances will be null.")
-
+            _logger.warning(
+                f"No daily summary found for date {entry_date_str} for account {account_number}. Opening/Closing balances will be null.")
 
         flattened.append({
             "entry_date": r.get("EntryDate"),
@@ -286,20 +294,22 @@ def get_all_transactions(end_date):
     """
     Fetches transactions for all BOG accounts from their last run date up to the specified end_date.
     """
-    initialize_db() # Ensure the database and success_log table exist
+    initialize_db()  # Ensure the database and success_log table exist
     accounts_df = read_accounts_from_excel()
 
     # --- Debugging check ---
     if accounts_df.empty:
         _logger.error("read_accounts_from_excel returned an empty DataFrame. Cannot proceed.")
         return pd.DataFrame()
-    _logger.info(f"Accounts DataFrame from Excel has {len(accounts_df)} rows and columns: {accounts_df.columns.tolist()}")
+    _logger.info(
+        f"Accounts DataFrame from Excel has {len(accounts_df)} rows and columns: {accounts_df.columns.tolist()}")
     # --- End Debugging check ---
 
     # Check for empty or malformed DataFrame
     required_cols = {'company', 'currency', 'account_number'}
     if not required_cols.issubset(accounts_df.columns):
-        _logger.error(f"Accounts DataFrame is missing required columns. Expected: {required_cols}, Found: {accounts_df.columns.tolist()}")
+        _logger.error(
+            f"Accounts DataFrame is missing required columns. Expected: {required_cols}, Found: {accounts_df.columns.tolist()}")
         return pd.DataFrame()
 
     all_records = []
@@ -312,17 +322,21 @@ def get_all_transactions(end_date):
         last_run_date_str = get_last_run_date(company, account_number, currency)
         if last_run_date_str:
             # Fetch from the day after the last successful run
-            start_date = (datetime.datetime.strptime(last_run_date_str, '%Y-%m-%d').date() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+            start_date = (datetime.datetime.strptime(last_run_date_str, '%Y-%m-%d').date() + datetime.timedelta(
+                days=1)).strftime('%Y-%m-%d')
         else:
             # If no last run date, fetch for a reasonable historical period, e.g., 30 days back from end_date
-            start_date = (datetime.datetime.strptime(end_date, '%Y-%m-%d').date() - datetime.timedelta(days=3)).strftime('%Y-%m-%d')
+            start_date = (
+                        datetime.datetime.strptime(end_date, '%Y-%m-%d').date() - datetime.timedelta(days=3)).strftime(
+                '%Y-%m-%d')
             _logger.info(f"No previous run date for {company}-{account_number}-{currency}. Fetching from {start_date}.")
 
         # Ensure start_date does not exceed end_date
-        if datetime.datetime.strptime(start_date, '%Y-%m-%d').date() > datetime.datetime.strptime(end_date, '%Y-%m-%d').date():
-            _logger.info(f"Start date {start_date} is after end date {end_date} for {company}-{account_number}-{currency}. Skipping.")
+        if datetime.datetime.strptime(start_date, '%Y-%m-%d').date() > datetime.datetime.strptime(end_date,
+                                                                                                  '%Y-%m-%d').date():
+            _logger.info(
+                f"Start date {start_date} is after end date {end_date} for {company}-{account_number}-{currency}. Skipping.")
             continue
-
 
         creds = COMPANY_CREDENTIALS_BOG.get(company)
         if not creds:
@@ -373,6 +387,7 @@ def write_transactions_to_sqlite(df, db_path='bank_data.db', table_name='bog_tra
         df.to_sql(table_name, conn, if_exists='append', index=False)
         _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
 
+
 def fetch_transactions_for_specific_day(specific_date):
     """
     Fetches transactions for all BOG accounts for a specific day.
@@ -396,7 +411,8 @@ def fetch_transactions_for_specific_day(specific_date):
 
     required_cols = {'company', 'currency', 'account_number'}
     if not required_cols.issubset(accounts_df.columns):
-        _logger.error(f"Accounts DataFrame is missing required columns. Expected: {required_cols}, Found: {accounts_df.columns.tolist()}")
+        _logger.error(
+            f"Accounts DataFrame is missing required columns. Expected: {required_cols}, Found: {accounts_df.columns.tolist()}")
         return pd.DataFrame()
 
     all_records = []
@@ -435,6 +451,7 @@ def fetch_transactions_for_specific_day(specific_date):
     _logger.warning(f"No transactions fetched for {specific_date}. Returning empty DataFrame.")
     return pd.DataFrame()
 
+
 def fetch_and_write_transactions_for_specific_day(specific_date, db_path='bank_data.db', table_name='bog_transactions'):
     """
     Fetches transactions for all BOG accounts for a specific day and writes them to the SQLite database.
@@ -456,23 +473,24 @@ def fetch_and_write_transactions_for_specific_day(specific_date, db_path='bank_d
     _logger.info(f"Transactions for {specific_date} successfully written to the database.")
     return df_transactions
 
+
 if __name__ == '__main__':
     # Initialize the database (creates success_log table if not exists)
     initialize_db()
 
     # Define the end date for fetching transactions
     # Set to today's date in Tbilisi for accurate daily fetches
- #   today = datetime.date.today()
- #   end_date_for_fetch = today.strftime('%Y-%m-%d')
+    #   today = datetime.date.today()
+    #   end_date_for_fetch = today.strftime('%Y-%m-%d')
 
-  #  _logger.info(f"Starting transaction fetch for end date: {end_date_for_fetch}")
-  #  df = get_all_transactions(end_date_for_fetch)
+    #  _logger.info(f"Starting transaction fetch for end date: {end_date_for_fetch}")
+    #  df = get_all_transactions(end_date_for_fetch)
 
-   # if not df.empty:
-     #   write_transactions_to_sqlite(df)
-  #      print("\n--- Fetched Transactions Sample (first 5 rows) ---")
-   #     print(df.head())
-  #      print(f"\nTotal transactions fetched: {len(df)}")
+    # if not df.empty:
+    #   write_transactions_to_sqlite(df)
+    #      print("\n--- Fetched Transactions Sample (first 5 rows) ---")
+    #     print(df.head())
+    #      print(f"\nTotal transactions fetched: {len(df)}")
 
-    specific_date = '2025-01-22'  # Replace with the desired date
+    specific_date = '2025-05-22'  # Replace with the desired date
     df_spec_date = fetch_and_write_transactions_for_specific_day(specific_date)

@@ -14,7 +14,8 @@ logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 # Constants
-TBC_CERT_BASE_PATH = r"C:\Users\arkik\DataspellProjects\POLI_BANK\tbc_certificates"
+TBC_CERT_BASE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'secrets', 'tbc_certs')
+TBC_CREDENTIALS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'secrets', 'tbc_credentials.json')
 
 # Abbreviation map
 CERTIFICATE_COMPANIES = {
@@ -31,18 +32,8 @@ CERTIFICATE_COMPANIES = {
 }
 
 # TBC credentials
-TBC_CREDENTIALS = {
-    'SRG': {'username': 'SRG_1', 'password': 'ASDasd12334!@'},
-    'RGG': {'username': 'RGG_1', 'password': 'ASDasd12334!@'},
-    'MRG': {'username': 'MRG_1', 'password': 'ASDasd12334!@'},
-    'BRG': {'username': 'BRG_1', 'password': 'ASDasd12334!@'},
-    'PRG': {'username': 'PRG_1', 'password': 'ASDasd12334!@'},
-    'MSG': {'username': 'MSG_1', 'password': 'ASDasd12334!@'},
-    'FRG': {'username': 'FRG_1', 'password': 'ASDasd12334!@'},
-    'MHR': {'username': 'MHR_1', 'password': 'ASDasd12334!@'},
-    'RGH': {'username': 'RGH_1', 'password': 'ASDasd12334!@'},
-    'GAG': {'username': 'GAG_1', 'password': 'ASDasd12334!@'},
-}
+with open(TBC_CREDENTIALS_PATH, 'r') as f:
+    TBC_CREDENTIALS = json.load(f)
 
 # SOAP Setup
 TBC_URL = "https://secdbi.tbconline.ge/dbi/dbiService"
@@ -324,7 +315,21 @@ def write_transactions_to_sqlite(df, db_path=None, table_name='tbc_transactions'
     if df.empty:
         _logger.warning("No transactions to write to database.")
         return
+
     with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        # Get existing columns
+        cursor.execute(f"PRAGMA table_info({table_name})")
+        existing_cols = set([row[1] for row in cursor.fetchall()])
+
+        # Add missing columns
+        for col in df.columns:
+            if col not in existing_cols:
+                # Default to TEXT type, or infer from df.dtypes if you want
+                cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN "{col}" TEXT')
+                _logger.info(f"Added missing column '{col}' to {table_name}")
+
+        # Now write the data
         df.to_sql(table_name, conn, if_exists='append', index=False)
         _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
 
