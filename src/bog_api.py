@@ -455,11 +455,7 @@ def fetch_and_write_transactions_for_specific_day(specific_date, db_path='bank_d
     write_transactions_to_sqlite(df_transactions, db_path=db_path, table_name=table_name)
     _logger.info(f"Transactions for {specific_date} successfully written to the database.")
     return df_transactions
-# Example usage
 
-
-
-# Example usage
 if __name__ == '__main__':
     # Initialize the database (creates success_log table if not exists)
     initialize_db()

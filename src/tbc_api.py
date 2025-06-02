@@ -118,7 +118,10 @@ def get_cert_paths(company_abbr):
         os.path.join(folder_path, 'key_unencrypted.pem'),
     )
 
-def read_accounts_from_excel(excel_file='Banks.xlsx'):
+def read_accounts_from_excel(excel_file=None):
+    if excel_file is None:
+        # Always use the configs/banks.xlsx relative to the project root
+        excel_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs', 'banks.xlsx')
     try:
         df = pd.read_excel(excel_file, sheet_name=0)
     except Exception as e:
@@ -312,10 +315,12 @@ def get_all_transactions(start_date, end_date):
         _logger.warning("No transactions found for the specified period")
         return pd.DataFrame()
 
-def write_transactions_to_sqlite(df, db_path='bank_data.db', table_name='tbc_transactions'):
+def write_transactions_to_sqlite(df, db_path=None, table_name='tbc_transactions'):
     """
     Write a DataFrame of TBC transactions to a SQLite3 database.
     """
+    if db_path is None:
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bank_data.db')
     if df.empty:
         _logger.warning("No transactions to write to database.")
         return
@@ -323,17 +328,18 @@ def write_transactions_to_sqlite(df, db_path='bank_data.db', table_name='tbc_tra
         df.to_sql(table_name, conn, if_exists='append', index=False)
         _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
 
-def get_last_successful_date(db_path='bank_data.db', table_name='download_log'):
+def get_last_successful_date(db_path=None, table_name='download_log'):
     """
     Get the last successful download date from the download log table.
 
     Returns:
         str: Last successful date in YYYY-MM-DD format, or None if no records exist
     """
+    if db_path is None:
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bank_data.db')
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
-
             # Create table if it doesn't exist
             cursor.execute(f'''
                 CREATE TABLE IF NOT EXISTS {table_name} (
@@ -343,7 +349,6 @@ def get_last_successful_date(db_path='bank_data.db', table_name='download_log'):
                     timestamp TEXT
                 )
             ''')
-
             # Get the last successful date
             cursor.execute(f'''
                 SELECT date FROM {table_name} 
@@ -351,15 +356,13 @@ def get_last_successful_date(db_path='bank_data.db', table_name='download_log'):
                 ORDER BY date DESC 
                 LIMIT 1
             ''')
-
             result = cursor.fetchone()
             return result[0] if result else None
-
     except Exception as e:
         _logger.error(f"Error getting last successful date: {e}")
         return None
 
-def log_download_status(date, status, transaction_count=0, db_path='bank_data.db', table_name='download_log'):
+def log_download_status(date, status, transaction_count=0, db_path=None, table_name='download_log'):
     """
     Log the download status for a specific date.
 
@@ -368,20 +371,19 @@ def log_download_status(date, status, transaction_count=0, db_path='bank_data.db
         status (str): 'success' or 'failed'
         transaction_count (int): Number of transactions downloaded
     """
+    if db_path is None:
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bank_data.db')
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
-
             # Insert or replace the log entry
             cursor.execute(f'''
                 INSERT OR REPLACE INTO {table_name} 
                 (date, status, transaction_count, timestamp) 
                 VALUES (?, ?, ?, ?)
             ''', (date, status, transaction_count, datetime.now().isoformat()))
-
             conn.commit()
             _logger.info(f"Logged download status for {date}: {status} ({transaction_count} transactions)")
-
     except Exception as e:
         _logger.error(f"Error logging download status: {e}")
 
@@ -473,17 +475,18 @@ def download_missing_days(start_date=None, max_retries=3):
     _logger.info(f"Download process completed. Total transactions downloaded: {total_downloaded}")
     return total_downloaded
 
-def get_download_summary(db_path='bank_data.db', table_name='download_log'):
+def get_download_summary(db_path=None, table_name='download_log'):
     """
     Get a summary of download history.
 
     Returns:
         dict: Summary statistics
     """
+    if db_path is None:
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bank_data.db')
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
-
             # Get summary statistics
             cursor.execute(f'''
                 SELECT 
@@ -495,9 +498,7 @@ def get_download_summary(db_path='bank_data.db', table_name='download_log'):
                     MAX(date) as last_date
                 FROM {table_name}
             ''')
-
             result = cursor.fetchone()
-
             if result and result[0] > 0:
                 return {
                     'total_days': result[0],
@@ -516,12 +517,10 @@ def get_download_summary(db_path='bank_data.db', table_name='download_log'):
                     'first_date': None,
                     'last_date': None
                 }
-
     except Exception as e:
         _logger.error(f"Error getting download summary: {e}")
         return None
 
-# Example usage
 if __name__ == "__main__":
     try:
         # Show current summary
@@ -537,7 +536,7 @@ if __name__ == "__main__":
 
         # Download missing days
         print("=== Starting Download Process ===")
-        total_downloaded = download_missing_days()
+        total_downloaded = download_missing_days(start_date='2025-05-21')
 
         print(f"\n=== Process Complete ===")
         print(f"Total new transactions downloaded: {total_downloaded}")
