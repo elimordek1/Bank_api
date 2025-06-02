@@ -95,7 +95,7 @@ def fetch_and_store_missing_nbg_rates():
     today = datetime.date.today()
 
     if latest_date is None:
-        latest_date = today - datetime.timedelta(days=200)  # fallback: go 30 days back
+        latest_date = today - datetime.timedelta(days=5)  # fallback: go 30 days back
 
     current_date = latest_date + datetime.timedelta(days=1)
     while current_date <= today:

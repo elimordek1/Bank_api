@@ -492,5 +492,5 @@ if __name__ == '__main__':
     #     print(df.head())
     #      print(f"\nTotal transactions fetched: {len(df)}")
 
-    specific_date = '2025-05-22'  # Replace with the desired date
+    specific_date = '2025-05-29'  # Replace with the desired date
     df_spec_date = fetch_and_write_transactions_for_specific_day(specific_date)
