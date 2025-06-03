@@ -306,33 +306,51 @@ def get_all_transactions(start_date, end_date):
         _logger.warning("No transactions found for the specified period")
         return pd.DataFrame()
 
+
 def write_transactions_to_sqlite(df, db_path=None, table_name='tbc_transactions'):
     """
     Write a DataFrame of TBC transactions to a SQLite3 database.
+    Creates the table if it doesn't exist.
     """
     if db_path is None:
         db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bank_data.db')
+
     if df.empty:
         _logger.warning("No transactions to write to database.")
         return
 
     with sqlite3.connect(db_path) as conn:
         cursor = conn.cursor()
+
+        # Check if table exists
+        cursor.execute("""
+                       SELECT name
+                       FROM sqlite_master
+                       WHERE type = 'table'
+                         AND name = ?;
+                       """, (table_name,))
+        table_exists = cursor.fetchone() is not None
+
+        # If table does not exist, create it based on df columns
+        if not table_exists:
+            columns_def = ", ".join([f'"{col}" TEXT' for col in df.columns])
+            create_stmt = f'CREATE TABLE "{table_name}" ({columns_def});'
+            cursor.execute(create_stmt)
+            _logger.info(f"Created table '{table_name}' with columns: {list(df.columns)}")
+
         # Get existing columns
         cursor.execute(f"PRAGMA table_info({table_name})")
-        existing_cols = set([row[1] for row in cursor.fetchall()])
+        existing_cols = set(row[1] for row in cursor.fetchall())
 
         # Add missing columns
         for col in df.columns:
             if col not in existing_cols:
-                # Default to TEXT type, or infer from df.dtypes if you want
-                cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN "{col}" TEXT')
+                cursor.execute(f'ALTER TABLE "{table_name}" ADD COLUMN "{col}" TEXT')
                 _logger.info(f"Added missing column '{col}' to {table_name}")
 
-        # Now write the data
+        # Write data
         df.to_sql(table_name, conn, if_exists='append', index=False)
-        _logger.info(f"Written {len(df)} transactions to {table_name} in {db_path}")
-
+        _logger.info(f"Written {len(df)} transactions to '{table_name}' in {db_path}")
 def get_last_successful_date(db_path=None, table_name='download_log'):
     """
     Get the last successful download date from the download log table.

@@ -129,6 +129,17 @@ def update_last_run_date(company, account_number, currency, new_date, db_path='b
         conn.commit()
     _logger.info(f"Updated last run date for {company}-{account_number}-{currency} to {new_date}")
 
+def save_daily_summaries_to_file(daily_summaries_data, account_number, currency, specific_date):
+    """
+    Saves the raw daily summaries JSON response to a text file.
+    """
+    filename = f"daily_summaries_{account_number}_{currency}_{specific_date}.json"
+    try:
+        with open(filename, "w") as f:
+            json.dump(daily_summaries_data, f, indent=2) # Use indent for pretty printing
+        _logger.info(f"Raw daily summaries for account {account_number} ({currency}) on {specific_date} saved to {filename}")
+    except IOError as e:
+        _logger.error(f"Error writing daily summaries to file {filename}: {e}")
 
 def fetch_transactions_for_account(client_id, client_secret, account_number, currency, start_date, end_date,
                                    company=None):
@@ -191,6 +202,11 @@ def fetch_transactions_for_account(client_id, client_secret, account_number, cur
             summary_response = requests.get(summary_url, headers=headers, timeout=15)  # Added timeout
             summary_response.raise_for_status()
             summary_json = summary_response.json()
+
+            # --- NEW: Save the full daily summaries JSON response to a file ---
+            save_daily_summaries_to_file(summary_json, account_number, currency, start_date)
+            # --- END NEW ---
+
             for summary in summary_json.get('DailySummaries', []):
                 summary_date_full = summary.get('Date')
                 if summary_date_full:
@@ -327,7 +343,7 @@ def get_all_transactions(end_date):
         else:
             # If no last run date, fetch for a reasonable historical period, e.g., 30 days back from end_date
             start_date = (
-                        datetime.datetime.strptime(end_date, '%Y-%m-%d').date() - datetime.timedelta(days=3)).strftime(
+                                 datetime.datetime.strptime(end_date, '%Y-%m-%d').date() - datetime.timedelta(days=3)).strftime(
                 '%Y-%m-%d')
             _logger.info(f"No previous run date for {company}-{account_number}-{currency}. Fetching from {start_date}.")
 
@@ -478,19 +494,11 @@ if __name__ == '__main__':
     # Initialize the database (creates success_log table if not exists)
     initialize_db()
 
-    # Define the end date for fetching transactions
-    # Set to today's date in Tbilisi for accurate daily fetches
-    #   today = datetime.date.today()
-    #   end_date_for_fetch = today.strftime('%Y-%m-%d')
-
-    #  _logger.info(f"Starting transaction fetch for end date: {end_date_for_fetch}")
-    #  df = get_all_transactions(end_date_for_fetch)
-
-    # if not df.empty:
-    #   write_transactions_to_sqlite(df)
-    #      print("\n--- Fetched Transactions Sample (first 5 rows) ---")
-    #     print(df.head())
-    #      print(f"\nTotal transactions fetched: {len(df)}")
-
-    specific_date = '2025-05-29'  # Replace with the desired date
+    specific_date = '2025-05-28'  # Replace with the desired date
     df_spec_date = fetch_and_write_transactions_for_specific_day(specific_date)
+
+    # The previous code to print the formatted summary to a file
+    # is now replaced by the direct saving of the raw JSON response
+    # from the API call itself within fetch_transactions_for_account.
+    # The output in the console will only be the logging messages.
+    print(f"Daily summaries for {specific_date} (and other dates if applicable) will be saved as JSON files named 'daily_summaries_ACCOUNTNUMBER_CURRENCY_DATE.json'.")
