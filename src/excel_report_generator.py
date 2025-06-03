@@ -477,23 +477,29 @@ def add_foreign_currency_summary_rows(df, bank_type='BOG'):
             summary_row['ანგარიშის ნომერი'] = account
 
             # Populate Debit GEL Equivalent or Credit GEL Equivalent based on exchange_diff sign
-            if exchange_diff > 0:
-                summary_row['დებეტი ექვ ლარში'] = exchange_diff
-                summary_row['კრედიტი ექვ ლარში'] = ''  # Ensure the other is empty
-            elif exchange_diff < 0:
-                summary_row['კრედიტი ექვ ლარში'] = abs(exchange_diff)
-                summary_row['დებეტი ექვ ლარში'] = ''  # Ensure the other is empty
+            ccy_diff_dr_column_name = 'დებეტი ექვ ლარში' if bank_type == 'BOG' else 'შემოსული თანხა ექვ.'
+            ccy_diff_cr_column_name = 'კრედიტი ექვ ლარში' if bank_type == 'BOG' else 'გასული თანხა ექვ.'
+
+            if exchange_diff < 0:
+                summary_row[ccy_diff_dr_column_name] = exchange_diff
+                summary_row[ccy_diff_cr_column_name] = ''  # Ensure the other is empty
+            elif exchange_diff > 0:
+                summary_row[ccy_diff_cr_column_name] = abs(exchange_diff)
+                summary_row[ccy_diff_dr_column_name] = ''  # Ensure the other is empty
             else:
-                summary_row['დებეტი ექვ ლარში'] = 0
-                summary_row['კრედიტი ექვ ლარში'] = 0
+                summary_row[ccy_diff_dr_column_name] = 0
+                summary_row[ccy_diff_cr_column_name] = 0
 
             # The 'თანხა ექვ ლარში' is the total exchange difference, which is already handled
-            summary_row['თანხა ექვ ლარში'] = exchange_diff  # This holds the raw calculated difference
+            if bank_type == 'BOG':
+                summary_row['თანხა ექვ ლარში'] = exchange_diff  # This holds the raw calculated difference
+            
 
             summary_row['კურსი'] = today_rate
 
             # Add opening balance for TBC summary rows (now it's the directly read value)
-            summary_row['საწყისი ნაშთი'] = opening_balance
+            if bank_type == 'TBC':
+                summary_row['საწყისი ნაშთი'] = opening_balance
 
             # Add intermediate terms for debugging/information
             summary_row['სავალუტო სხვაობა - Term1'] = term1
@@ -636,7 +642,9 @@ def main():
 
     for company in companies:
         bog_c = bog_df[bog_df['Company'] == company] if not bog_df.empty else pd.DataFrame(columns=bog_df.columns)
+        
         tbc_c = tbc_df[tbc_df['Company'] == company] if not tbc_df.empty else pd.DataFrame(columns=tbc_df.columns)
+
 
         if 'თარიღი' not in bog_c.columns:
             bog_c['თარიღი'] = ''
@@ -658,10 +666,15 @@ def main():
                 columns=bog_date.columns)
             bog_other = bog_date[bog_date['Curr'] != 'GEL'] if not bog_date.empty else pd.DataFrame(
                 columns=bog_date.columns)
+            
+            
             tbc_gel = tbc_date[tbc_date['Curr'] == 'GEL'] if not tbc_date.empty else pd.DataFrame(
                 columns=tbc_date.columns)
+            
             tbc_other = tbc_date[tbc_date['Curr'] != 'GEL'] if not tbc_date.empty else pd.DataFrame(
                 columns=tbc_date.columns)
+            
+                
 
             write_excel(company, date, bog_gel, bog_other, tbc_gel, tbc_other)
 
