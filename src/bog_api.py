@@ -445,6 +445,11 @@ def fetch_transactions_for_specific_day(specific_date):
                 record.setdefault(key, None)
 
         df_result = pd.DataFrame(all_records)
+
+        # add calculated FX rates from foreign currency operations (where currency is not GEL)
+
+
+
         _logger.info(f"Successfully fetched transactions for {specific_date}. Total records: {len(df_result)}")
         return df_result
 
